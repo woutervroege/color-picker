@@ -1,5 +1,4 @@
 import { Properties } from 'html-element-property-mixins';
-import { ObjectConverter } from 'html-element-property-mixins/src/utils/attribute-converters';
 import { PropertyChangedHandler, PropertiesChangedHandler, PropertiesChangedCallback } from 'html-element-property-mixins/src/addons';
 import { TinyColor } from '@ctrl/tinycolor';
 import { render, html } from 'lit-html';
@@ -129,7 +128,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     window.addEventListener('mousemove', this._handleMousemove.bind(this), false);
     enableFocusVisible(this.$grid);
     this._valueChanged();
-    this.shadowRoot.querySelectorAll('input, select').forEach(item => enableFocusVisible(item))
+    this.shadowRoot.querySelectorAll('input, select').forEach(item => enableFocusVisible(item));
   }
 
   connectedCallback() {
