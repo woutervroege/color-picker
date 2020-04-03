@@ -430,6 +430,12 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
     if(e.key === 'ArrowUp') return this.value = (this.format === 'hsl') ? {...hsl, ...{l: hsl.l+0.01}} : {...hsv, ...{v: hsv.v+0.01}};
     if(e.key === 'ArrowDown') return this.value = (this.format === 'hsl') ? {...hsl, ...{l: hsl.l-0.01}} : {...hsv, ...{v: hsv.v-0.01}};
+
+    if(e.key === 'Home') return this.value = (this.format === 'hsl') ? {...hsl, ...{s: hsl.s-0.10}} : {...hsv, ...{s: hsv.s-0.10}};
+    if(e.key === 'End') return this.value = (this.format === 'hsl') ? {...hsl, ...{s: hsl.s+0.10}} : {...hsv, ...{s: hsv.s+0.10}};
+
+    if(e.key === 'PageUp') return this.value = (this.format === 'hsl') ? {...hsl, ...{l: hsl.l+0.10}} : {...hsv, ...{v: hsv.v+0.10}};
+    if(e.key === 'PageDown') return this.value = (this.format === 'hsl') ? {...hsl, ...{l: hsl.l-0.10}} : {...hsv, ...{v: hsv.v-0.10}};
   }
 
   _handleGridClick(e) {
