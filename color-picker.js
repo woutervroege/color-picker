@@ -102,6 +102,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     window.addEventListener('mousemove', this._handleMousemove.bind(this), false);
     enableFocusVisible(this.$grid);
     this._valueChanged();
+    this.shadowRoot.querySelectorAll('input, select').forEach(item => enableFocusVisible(item))
   }
 
   propertyChangedCallback(propNames, oldValues, newValues) {
@@ -130,8 +131,25 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           height: 240px;
           display: block;
           font-family: sans-serif;
-          background: #222;
-          color: white;
+          --color-picker-background-color: #fff;
+          --color-picker-color: #222;
+        }
+
+        :host([light]) {
+          --color-picker-background-color: #fff;
+          --color-picker-color: #222;          
+        }
+
+        @media (prefers-color-scheme: dark) {
+          :host {
+            --color-picker-background-color: #222;
+            --color-picker-color: #fff;          
+          }
+        }
+
+        :host([dark]) {
+          --color-picker-background-color: #222;
+          --color-picker-color: #fff;          
         }
 
         #container {
@@ -139,6 +157,8 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           flex-direction: column;
           width: 100%;
           height: 100%;
+          background-color: var(--color-picker-background-color);
+          color: var(--color-picker-color);
         }
 
         #gridInput {
@@ -212,6 +232,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           width: 38px;
           height: 38px;
           border-radius: 50%;
+          border: 1px solid var(--bg-color--10);
           margin: auto;
           overflow: hidden;
         }
@@ -231,9 +252,22 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           background: var(--value);
         }
 
+        input, select {
+          border: 1px solid transparent;
+          outline: none;
+        }
+
+        input:hover, select:hover, input:focus, select:focus {
+          border-color: var(--bg-color--10);
+        }
+
+        :focus.focus-visible {
+          outline-color: -webkit-focus-ring-color;
+          outline-style: auto;
+        }
+
         input, select, select * {
           font-size: 12px;
-          border: 0;
           padding: 3px;
           min-width: 44px;
           color: inherit;
@@ -277,7 +311,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           text-align: center;
           text-transform: uppercase;
           color: inherit;
-          opacity: 0.7;
+          color: var(--bg-color--60);
           display: block;
         }
 
@@ -450,10 +484,12 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
   _valueChanged() {
     this._setGridThumbPosition();
+    this._setHighlightColors();
     if(!this.$container) return;
     this.$container.style.setProperty('--value', this.value.toRgbString());
     this.$container.style.setProperty('--alpha-slider-background-0', `${this.value.toHexString()}00`);
     this.$container.style.setProperty('--alpha-slider-background-100', `${this.value.toHexString()}`);
+
   }
 
   _formatChanged() {
@@ -482,6 +518,15 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     this.$grid.style.setProperty('--grid-offset-x', `${thumbX}px`);
     this.$grid.style.setProperty('--grid-offset-y', `${thumbY}px`);
     this.$grid.style.setProperty('--grid-background', new TinyColor({h: this.value.toHsl().h, s: 100, v: 100}).toRgbString());
+  }
+
+  _setHighlightColors() {
+    if(!this.$container) return;
+    const bgColor = new TinyColor(window.getComputedStyle(this.$container).backgroundColor);
+    const method = bgColor.isLight() ? 'darken' : 'brighten';
+    this.$container && this.$container.style.setProperty('--bg-color--10', bgColor[method]()[method]().toRgbString());
+    this.$container && this.$container.style.setProperty('--bg-color--20', bgColor[method]()[method]().toRgbString());
+    this.$container && this.$container.style.setProperty('--bg-color--60', bgColor[method]()[method]()[method]()[method]()[method]()[method]().toRgbString());
   }
 
   get _thumbStyles() {
