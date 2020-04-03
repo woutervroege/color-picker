@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="module" src="./color-picker.js"></script>
+  <title>demo/color-picker</title>
+  <style>
+    html, body {
+    }
+  </style>
+</head>
+<body>
+  <color-picker id="picker"></color-picker>
+  <script>
+    picker.addEventListener('input', (e) => {
+      console.info('input', e.detail.value);
+    })
+    picker.addEventListener('change', (e) => {
+      console.info('change', e.detail.value);
+    })
+  </script>
+</body>
+</html>

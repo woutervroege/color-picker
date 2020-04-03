@@ -1,0 +1,43 @@
+{
+  "name": "color-picker-element",
+  "version": "0.9.0",
+  "description": "Color Picker Web Component",
+  "main": "color-picker.js",
+  "scripts": {
+    "start": "es-dev-server --http2 --app-index ./ --node-resolve --open --watch",
+    "format": "eslint --ext .js . --fix --ignore-path .gitignore"
+  },
+  "author": "Wouter Vroege",
+  "license": "MIT",
+  "dependencies": {
+    "@ctrl/tinycolor": "^2.6.1",
+    "@html-element-wrappers/input": "^0.3.1",
+    "html-element-property-mixins": "^0.10.3"
+  },
+  "devDependencies": {
+    "es-dev-server": "^1.46.0",
+    "husky": "^4.2.3",
+    "lit-html": "^1.2.1"
+  },
+  "keywords": [
+    "tinycolor",
+    "color",
+    "picker",
+    "component",
+    "element",
+    "input",
+    "hsl",
+    "hsv",
+    "hsb",
+    "hex",
+    "hex8",
+    "rgb",
+    "rgba",
+    "rrggbba"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run format"
+    }
+  }
+}
