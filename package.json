@@ -1,6 +1,6 @@
 {
   "name": "color-picker-element",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Color Picker Web Component",
   "main": "color-picker.js",
   "scripts": {
@@ -11,7 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "@ctrl/tinycolor": "^2.6.1",
-    "@color-picker-element/input": "^0.3.1",
+    "@html-element-wrappers/input": "^0.3.1",
     "html-element-property-mixins": "^0.10.3"
   },
   "devDependencies": {
