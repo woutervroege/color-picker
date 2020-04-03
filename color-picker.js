@@ -168,7 +168,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
     window.addEventListener('mouseup', this._handleMouseup.bind(this), false);
     window.addEventListener('mousemove', this._handleMousemove.bind(this), false);
-    enableFocusVisible(this._$container);
+    enableFocusVisible(this._$grid);
     this._valueChanged();
     this.shadowRoot.querySelectorAll('input, select').forEach(item => enableFocusVisible(item));
   }
@@ -254,7 +254,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           ${this._thumbStyles}
         }
 
-        #gridInput:focus.focus-visible {
+        #gridInput.focus-visible:focus {
           outline-color: -webkit-focus-ring-color;
           outline-style: auto;
         }
