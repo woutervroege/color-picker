@@ -10,6 +10,8 @@ import { enableFocusVisible } from '../utils/focus-visible-polyfill.js';
  * - Supports hex, rgb(a), rrggbbaa/hex8, hsl(a) and hsv/b(a) color schemes.
  * - Fully keyboard accessible
  * 
+ * ![screenshot](https://raw.github.com/woutervroege/color-picker/master/screenshot.gif)
+ * 
  * ```html
  * <color-picker
  *  id="picker"

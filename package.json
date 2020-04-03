@@ -21,13 +21,13 @@
     "release-it": "^13.5.1",
     "web-component-analyzer": "^1.0.3"
   },
-  "homepage": "https://github.com/woutervroege/color-picker-element#readme",
+  "homepage": "https://github.com/woutervroege/color-picker#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/woutervroege/color-picker-element.git"
+    "url": "git+https://github.com/woutervroege/color-picker.git"
   },
   "bugs": {
-    "url": "https://github.com/woutervroege/color-picker-element/issues"
+    "url": "https://github.com/woutervroege/color-picker/issues"
   },
   "keywords": [
     "tinycolor",
