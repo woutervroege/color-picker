@@ -17,7 +17,8 @@
   "devDependencies": {
     "es-dev-server": "^1.46.0",
     "husky": "^4.2.3",
-    "lit-html": "^1.2.1"
+    "lit-html": "^1.2.1",
+    "release-it": "^13.5.1"
   },
   "homepage": "https://github.com/woutervroege/color-picker-element#readme",
   "repository": {
