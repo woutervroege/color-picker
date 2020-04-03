@@ -72,12 +72,12 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   }
 
   get selectedFormat() {
-    return this['#format'];
+    return this['#selectedFormat'];
   }
 
   set selectedFormat(val) {
-    if(this.supportedFormats.indexOf(val) === -1) return;
-    this['#format'] = val;
+    if((this.formats || []).indexOf(val) === -1) return;
+    this['#selectedFormat'] = val;
   }
 
   get hsv() {
@@ -130,6 +130,11 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     enableFocusVisible(this.$grid);
     this._valueChanged();
     this.shadowRoot.querySelectorAll('input, select').forEach(item => enableFocusVisible(item))
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.selectedFormat = this.color.format;
   }
 
   propertyChangedCallback(propNames, oldValues, newValues) {
