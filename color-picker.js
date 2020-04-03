@@ -63,9 +63,9 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   }
 
   set alpha(alpha) {
-    const oldVal = this.value.getAlpha();
+    const oldVal = this.value;
     this.value.setAlpha(alpha);
-    this.propertyChangedCallback('alpha', oldVal, this.alpha);
+    this.propertyChangedCallback('value', oldVal, this.value);
   }
 
   get hex() {
@@ -100,7 +100,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
     window.addEventListener('mouseup', this._handleMouseup.bind(this), false);
     window.addEventListener('mousemove', this._handleMousemove.bind(this), false);
-    enableFocusVisible(this.shadowRoot.querySelector('#gridInput'));
+    enableFocusVisible(this.$grid);
     this._valueChanged();
   }
 
@@ -127,18 +127,26 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
         :host {
           width: 240px;
+          height: 240px;
           display: block;
           font-family: sans-serif;
           background: #222;
           color: white;
         }
 
+        #container {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          height: 100%;
+        }
+
         #gridInput {
           position: relative;
           width: 100%;
-          height: 180px;
-          background: ${new TinyColor({h: this.value.toHsl().h, s: 100, v: 100}).toRgbString()};
+          background: var(--grid-background);
           outline: none;
+          flex: 1;
         }
 
         #gridInput:after {
@@ -163,7 +171,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
         }
 
         #gridInput:before {
-          background: ${this._gridGradient};
+          background: var(--grid-gradient);
           content: '';
         }
 
@@ -189,7 +197,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
         #alphaInput {
           position: relative;
-          --color-picker-slider-track-background: linear-gradient(to right, ${this.value.toHexString()}00 0%, ${this.value.toHexString()} 100%);
+          --color-picker-slider-track-background: linear-gradient(to right, var(--alpha-slider-background-0) 0%, var(--alpha-slider-background-100) 100%);
         }
 
         #alphaInput:before, #alphaInput:after {
@@ -215,12 +223,12 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
         .checkerboard:before {
           background: linear-gradient(45deg, #777 25%, transparent 25%), linear-gradient(-45deg, #777 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #777 75%), linear-gradient(-45deg, transparent 75%, #777 75%);
-          background-size: ${'6px'} ${'6px'};
-          background-position: 0 0, 0 ${'3px'}, ${'3px'} -${'3px'}, -${'3px'} 0px;
+          background-size: 6px 6px;
+          background-position: 0 0, 0 3px, 3px -3px, -3px 0px;
         }
 
         #colorSteel:after {
-          background: ${this.value.toRgbString()};
+          background: var(--value);
         }
 
         input, select, select * {
@@ -237,25 +245,14 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           -webkit-appearance: none;
           margin: 0;
         }
-
-        .flex {
+        
+        #textInput {
+          padding: 0 8px 8px 8px;
           display: flex;
-        }
-
-        .align-center {
           align-items: center;
         }
 
-        .justify-center {
-          justify-content: center;
-        }
-
-        #textInput {
-          padding: 0 8px 8px 8px;
-        }
-
         select, .color-input, .alpha-input {
-          /* border: 1px solid #ddd; */
           flex: 0;
           padding: 0;
         }
@@ -288,18 +285,22 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           -webkit-appearance: none;
           -moz-appearance: none;
           -ms-appearance: none;
-          height: 100%;
           border-radius: 0;
           background: transparent;
           padding: 3px;
           text-align: center;
           text-align-last: center;
           align-self: flex-start;
+          margin: 0;
         }
 
         .color-input {
-          flex: 1;
+          flex: 0;
           display: flex;
+        }
+
+        .color-input.text {
+          flex: none;
         }
 
         input {
@@ -319,62 +320,65 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
         }
       </style>
 
-      <section
-        id="gridInput"
-        class="absbefore absafter"
-        tabindex="0"
-        @mousedown="${this._handleMousedown}"
-        @keydown="${this._handleGridKeydown}"
-        @click="${this._handleGridClick}"
-      ></section>
+      <div id="container">
 
-      <section id="sliderInput">
-        <div id="sliders">
-          <color-picker-slider id="hueInput" .value="${this.hsv.h}" min="0" max="359" step="1" data-scheme="hsv" data-key="h" @input="${this._handleInput}" @mousedown="${() => this._sliderDown = true}" @mouseup="${() => this._sliderDown = false}"></color-picker-slider>
-          <color-picker-slider id="alphaInput" class="absbefore absafter checkerboard" .value="${this.alpha}" min="0" max="1" step="0.01" @input="${this._handleAlphaSliderInput}" @mousedown="${() => this._sliderDown = true}" @mouseup="${() => this._sliderDown = false}"></color-picker-slider>
-        </div>
-        <div id="colorSteel" class="absbefore absafter checkerboard"></div>
-      </section>
+        <section
+          id="gridInput"
+          class="absbefore absafter"
+          tabindex="0"
+          @mousedown="${this._handleMousedown}"
+          @keydown="${this._handleGridKeydown}"
+          @click="${this._handleGridClick}"
+        ></section>
 
-      <section id="textInput" class="flex align-center jusify-center">
+        <section id="sliderInput">
+          <div id="sliders">
+            <color-picker-slider id="hueInput" .value="${this.hsv.h}" min="0" max="359" step="1" data-scheme="hsv" data-key="h" @input="${this._handleInput}" @mousedown="${() => this._sliderDown = true}" @mouseup="${() => this._sliderDown = false}"></color-picker-slider>
+            <color-picker-slider id="alphaInput" class="absbefore absafter checkerboard" .value="${this.alpha}" min="0" max="1" step="0.01" @input="${this._handleAlphaSliderInput}" @mousedown="${() => this._sliderDown = true}" @mouseup="${() => this._sliderDown = false}"></color-picker-slider>
+          </div>
+          <div id="colorSteel" class="absbefore absafter checkerboard"></div>
+        </section>
 
-        <select .selectedIndex="${this.supportedFormats.indexOf(this.format)}" @input="${this._handleSelectInput}">
-          ${this.supportedFormats.map(format => html`
-            <option .value="${format}">${format.toUpperCase()}</option>
-          `)}
-        </select>
+        <section id="textInput">
 
-        <div ?hidden="${this.format !== 'hsv'}" class="color-input">
-          <label data-name="h"><input type="number" .value="${Math.round(this.hsv.h)}" min="0" max="359" step="1" data-scheme="hsv", data-key="h" @input="${this._handleInput}"></label>
-          <label data-name="s"><input type="number" .value="${Math.round(this.hsv.s * 100)}" min="0" max="100" step="1" data-scheme="hsv", data-key="s" @input="${this._handleInput}"></label>
-          <label data-name="v"><input type="number" .value="${Math.round(this.hsv.v * 100)}" min="0" max="100" step="1" data-scheme="hsv", data-key="v" @input="${this._handleInput}"></label>
-        </div>
+          <select .selectedIndex="${this.supportedFormats.indexOf(this.format)}" @input="${this._handleSelectInput}">
+            ${this.supportedFormats.map(format => html`
+              <option .value="${format}">${format.toUpperCase()}</option>
+            `)}
+          </select>
 
-        <div ?hidden="${this.format !== 'hsl'}" class="color-input">
-          <label data-name="h"><input type="number" .value="${Math.round(this.hsl.h)}" min="0" max="359" step="1" data-scheme="hsl", data-key="h" @input="${this._handleInput}"></label>
-          <label data-name="s"><input type="number" .value="${Math.round(this.hsl.s * 100)}" min="0" max="100" step="1" data-scheme="hsl", data-key="s" @input="${this._handleInput}"></label>
-          <label data-name="l"><input type="number" .value="${Math.round(this.hsl.l * 100)}" min="0" max="100" step="1" data-scheme="hsl", data-key="l" @input="${this._handleInput}"></label>
-        </div>
+          <div ?hidden="${this.format !== 'hsv'}" class="color-input">
+            <label data-name="h"><input type="number" .value="${Math.round(this.hsv.h)}" min="0" max="359" step="1" data-scheme="hsv", data-key="h" @input="${this._handleInput}"></label>
+            <label data-name="s"><input type="number" .value="${Math.round(this.hsv.s * 100)}" min="0" max="100" step="1" data-scheme="hsv", data-key="s" @input="${this._handleInput}"></label>
+            <label data-name="v"><input type="number" .value="${Math.round(this.hsv.v * 100)}" min="0" max="100" step="1" data-scheme="hsv", data-key="v" @input="${this._handleInput}"></label>
+          </div>
 
-        <div ?hidden="${this.format !== 'rgb'}" class="color-input">
-          <label data-name="r"><input type="number" .value="${this.rgb.r}" min="0" max="255" step="1" data-scheme="rgb", data-key="r" @input="${this._handleInput}"></label>
-          <label data-name="g"><input type="number" .value="${this.rgb.g}" min="0" max="255" step="1" data-scheme="rgb", data-key="g" @input="${this._handleInput}"></label>
-          <label data-name="b"><input type="number" .value="${this.rgb.b}" min="0" max="255" step="1" data-scheme="rgb", data-key="b" @input="${this._handleInput}"></label>
-        </div>
+          <div ?hidden="${this.format !== 'hsl'}" class="color-input">
+            <label data-name="h"><input type="number" .value="${Math.round(this.hsl.h)}" min="0" max="359" step="1" data-scheme="hsl", data-key="h" @input="${this._handleInput}"></label>
+            <label data-name="s"><input type="number" .value="${Math.round(this.hsl.s * 100)}" min="0" max="100" step="1" data-scheme="hsl", data-key="s" @input="${this._handleInput}"></label>
+            <label data-name="l"><input type="number" .value="${Math.round(this.hsl.l * 100)}" min="0" max="100" step="1" data-scheme="hsl", data-key="l" @input="${this._handleInput}"></label>
+          </div>
 
-        <div ?hidden="${this.format !== 'hex'}" class="color-input">
-          <label data-name="#"><input type="text" .value="${this.hex}" data-scheme="hex" @change="${this._handleInput}"></label>
-        </div>
+          <div ?hidden="${this.format !== 'rgb'}" class="color-input">
+            <label data-name="r"><input type="number" .value="${this.rgb.r}" min="0" max="255" step="1" data-scheme="rgb", data-key="r" @input="${this._handleInput}"></label>
+            <label data-name="g"><input type="number" .value="${this.rgb.g}" min="0" max="255" step="1" data-scheme="rgb", data-key="g" @input="${this._handleInput}"></label>
+            <label data-name="b"><input type="number" .value="${this.rgb.b}" min="0" max="255" step="1" data-scheme="rgb", data-key="b" @input="${this._handleInput}"></label>
+          </div>
 
-        <div ?hidden="${this.format !== 'hex8'}" class="color-input">
-        <label data-name="#"><input type="text" .value="${this.hex8}" data-scheme="hex8" @change="${this._handleInput}"></label>
-        </div>
+          <div ?hidden="${this.format !== 'hex'}" class="color-input text">
+            <label data-name="#"><input type="text" .value="${this.hex}" data-scheme="hex" maxlength="6" @change="${this._handleInput}"></label>
+          </div>
 
-        <div class="alpha-input" ?hidden="${this.format === 'hex8'}">
-          <label data-name="%"><input type="number" .value="${Math.round(this.alpha * 100)}" min="0" max="100" step="1" data-scheme="alpha" @input="${this._handleAlphaInput}"></label>
-        </div>
-      
-      </section>
+          <div ?hidden="${this.format !== 'hex8'}" class="color-input text">
+          <label data-name="#"><input type="text" .value="${this.hex8}" data-scheme="hex8" maxlength="8" @change="${this._handleInput}"></label>
+          </div>
+
+          <div class="alpha-input" ?hidden="${this.format === 'hex8'}">
+            <label data-name="%"><input type="number" .value="${Math.round(this.alpha * 100)}" min="0" max="100" step="1" data-scheme="alpha" @input="${this._handleAlphaInput}"></label>
+          </div>
+        
+        </section>
+      </div>
     `;
   }
 
@@ -410,9 +414,8 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
   _handleMousemove(e) {
     if(!this._pointerDown) return;
-    const grid = this.shadowRoot.querySelector('#gridInput');
-    const saturation = Math.min(Math.max((e.offsetX / grid.offsetWidth), 0.01), 0.99);
-    const value = 1 - Math.min(Math.max((e.offsetY / grid.offsetHeight), 0.01), 0.99);
+    const saturation = Math.min(Math.max((e.offsetX / this.$grid.offsetWidth), 0.01), 0.99);
+    const value = 1 - Math.min(Math.max((e.offsetY / this.$grid.offsetHeight), 0.01), 0.99);
     if(this.format === 'hsl') this.value = {...this.value.toHsl(), ...{s: saturation}, ...{l: value}};
     else this.value = {...this.value.toHsv(), ...{s: saturation}, ...{v: value}};
   }
@@ -446,9 +449,14 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
   _valueChanged() {
     this._setGridThumbPosition();
+    if(!this.$container) return;
+    this.$container.style.setProperty('--value', this.value.toRgbString());
+    this.$container.style.setProperty('--alpha-slider-background-0', `${this.value.toHexString()}00`)
+    this.$container.style.setProperty('--alpha-slider-background-100', `${this.value.toHexString()}`)
   }
 
   _formatChanged() {
+    this.$grid.style.setProperty('--grid-gradient', this._gridGradient);
     this._setGridThumbPosition();
   }
 
@@ -464,19 +472,27 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   }
 
   _setGridThumbPosition() {
-    const grid = this.shadowRoot.querySelector('#gridInput');
-    if(!grid) return;
+    if(!this.$grid) return;
 
     const saturation = (this.format === 'hsl') ? this.hsl.s : this.hsv.s;
     const value = (this.format === 'hsl') ? this.hsl.l : this.hsv.v;
-    const thumbX = grid.offsetWidth * saturation;
-    const thumbY = grid.offsetHeight * (1-value);
-    grid.style.setProperty('--grid-offset-x', `${thumbX}px`);
-    grid.style.setProperty('--grid-offset-y', `${thumbY}px`);
+    const thumbX = this.$grid.offsetWidth * saturation;
+    const thumbY = this.$grid.offsetHeight * (1-value);
+    this.$grid.style.setProperty('--grid-offset-x', `${thumbX}px`);
+    this.$grid.style.setProperty('--grid-offset-y', `${thumbY}px`);
+    this.$grid.style.setProperty('--grid-background', new TinyColor({h: this.value.toHsl().h, s: 100, v: 100}).toRgbString());
   }
 
   get _thumbStyles() {
     return new ColorPickerSlider()._thumbStyles;
+  }
+
+  get $container() {
+    return this.shadowRoot.querySelector('#container')
+  }
+
+  get $grid() {
+    return this.shadowRoot.querySelector('#gridInput')
   }
 
 }
