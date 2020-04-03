@@ -527,8 +527,8 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
   _handleMousemove(e) {
     if(!this._pointerDown) return;
-    const saturation = Math.min(Math.max((e.offsetX / this._$container.offsetWidth), 0.01), 0.99);
-    const value = 1 - Math.min(Math.max((e.offsetY / this._$container.offsetHeight), 0.01), 0.99);
+    const saturation = Math.min(Math.max((e.offsetX / this._$grid.offsetWidth), 0.01), 0.99);
+    const value = 1 - Math.min(Math.max((e.offsetY / this._$grid.offsetHeight), 0.01), 0.99);
     if(this.selectedFormat === 'hsl') this.value = {...this.color.toHsl(), ...{s: saturation}, ...{l: value}};
     else this.value = {...this.color.toHsv(), ...{s: saturation}, ...{v: value}};
   }
@@ -574,7 +574,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   }
 
   _selectedFormatChanged() {
-    this._$container.style.setProperty('--grid-gradient', this._gridGradient);
+    this._$grid.style.setProperty('--grid-gradient', this._gridGradient);
     this._setGridThumbPosition();
   }
 
@@ -590,15 +590,15 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   }
 
   _setGridThumbPosition() {
-    if(!this._$container) return;
+    if(!this._$grid) return;
 
     const saturation = (this.selectedFormat === 'hsl') ? this.hsl.s : this.hsv.s;
     const value = (this.selectedFormat === 'hsl') ? this.hsl.l : this.hsv.v;
-    const thumbX = this._$container.offsetWidth * saturation;
-    const thumbY = this._$container.offsetHeight * (1-value);
-    this._$container.style.setProperty('--grid-offset-x', `${thumbX}px`);
-    this._$container.style.setProperty('--grid-offset-y', `${thumbY}px`);
-    this._$container.style.setProperty('--grid-background', new TinyColor({h: this.color.toHsl().h, s: 100, v: 100}).toRgbString());
+    const thumbX = this._$grid.offsetWidth * saturation;
+    const thumbY = this._$grid.offsetHeight * (1-value);
+    this._$grid.style.setProperty('--grid-offset-x', `${thumbX}px`);
+    this._$grid.style.setProperty('--grid-offset-y', `${thumbY}px`);
+    this._$grid.style.setProperty('--grid-background', new TinyColor({h: this.color.toHsl().h, s: 100, v: 100}).toRgbString());
   }
 
   _setHighlightColors() {
@@ -618,7 +618,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     return this.shadowRoot.querySelector('#container');
   }
 
-  get _$container() {
+  get _$grid() {
     return this.shadowRoot.querySelector('#gridInput');
   }
 
