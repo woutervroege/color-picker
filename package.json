@@ -18,7 +18,8 @@
     "es-dev-server": "^1.46.0",
     "husky": "^4.2.3",
     "lit-html": "^1.2.1",
-    "release-it": "^13.5.1"
+    "release-it": "^13.5.1",
+    "web-component-analyzer": "^1.0.3"
   },
   "homepage": "https://github.com/woutervroege/color-picker-element#readme",
   "repository": {
@@ -42,7 +43,8 @@
     "hex8",
     "rgb",
     "rgba",
-    "rrggbba"
+    "rrggbba",
+    "a11y"
   ],
   "husky": {
     "hooks": {

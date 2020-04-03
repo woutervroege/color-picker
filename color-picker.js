@@ -5,6 +5,46 @@ import { render, html } from 'lit-html';
 import { ColorPickerSlider } from './color-picker-slider.js';
 import { enableFocusVisible } from '../utils/focus-visible-polyfill.js';
 
+/**
+ * color-picker is a custom Element powered by @bgins TinyColor library.
+ * - Supports hex, rgb(a), rrggbbaa/hex8, hsl(a) and hsv/b(a) color schemes.
+ * - Fully keyboard accessible
+ * 
+ * ```html
+ * <color-picker
+ *  id="picker"
+ *  value="#ff0000"
+ *  formats="hex,rgb,hsl,hsv,hex8"
+ *  selectedformat="hex"
+ * ></color-picker>
+ * ```
+ * ```javascript
+ * picker.addEventlistener('input', (e) => console.info('input', e.detail.value))
+ * picker.addEventlistener('change', (e) => console.info('change', e.detail.value))
+ * ```
+ * 
+ * @element color-picker
+ * 
+ * @fires input
+ * @fires change 
+ * 
+ * @prop {String} value - color value
+ * @attr {String} value
+ * 
+ * @prop {Array} formats - list of visible color schemes
+ * @attr {String} formats - comma separated list of listed formats
+ * 
+ * @prop {String} selectedFormat - selected color scheme
+ * @attr {String} selectedformat
+ * 
+ * @attr {Boolean} dark - Force dark mode when dark-mode is disabled in browser.
+ * @attr {Boolean} light - Force light mode when dark-mode is enabled in browser.
+ * 
+ * @cssprop [--color-picker-background-color] - backround color
+ * @cssprop [--color-picker-color] - text color
+ * 
+ */
+
 class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(PropertyChangedHandler(Properties(HTMLElement)))) {
 
   static get properties() {
@@ -126,7 +166,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
     window.addEventListener('mouseup', this._handleMouseup.bind(this), false);
     window.addEventListener('mousemove', this._handleMousemove.bind(this), false);
-    enableFocusVisible(this.$grid);
+    enableFocusVisible(this._$container);
     this._valueChanged();
     this.shadowRoot.querySelectorAll('input, select').forEach(item => enableFocusVisible(item));
   }
@@ -136,6 +176,9 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     this.selectedFormat = this.color.format;
   }
 
+  /**
+   * @private
+   */
   propertyChangedCallback(propNames, oldValues, newValues) {
     super.propertyChangedCallback(propNames, oldValues, newValues);
     render(this.template, this.shadowRoot, {eventContext: this, scopeName: this.localName});
@@ -147,6 +190,9 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     };
   }
 
+  /**
+   * @private
+   */
   get template() {
     return html`
 
@@ -481,8 +527,8 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
   _handleMousemove(e) {
     if(!this._pointerDown) return;
-    const saturation = Math.min(Math.max((e.offsetX / this.$grid.offsetWidth), 0.01), 0.99);
-    const value = 1 - Math.min(Math.max((e.offsetY / this.$grid.offsetHeight), 0.01), 0.99);
+    const saturation = Math.min(Math.max((e.offsetX / this._$container.offsetWidth), 0.01), 0.99);
+    const value = 1 - Math.min(Math.max((e.offsetY / this._$container.offsetHeight), 0.01), 0.99);
     if(this.selectedFormat === 'hsl') this.value = {...this.color.toHsl(), ...{s: saturation}, ...{l: value}};
     else this.value = {...this.color.toHsv(), ...{s: saturation}, ...{v: value}};
   }
@@ -517,10 +563,10 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   _valueChanged() {
     this._setGridThumbPosition();
     this._setHighlightColors();
-    if(!this.$container) return;
-    this.$container.style.setProperty('--value', this.color.toRgbString());
-    this.$container.style.setProperty('--alpha-slider-background-0', `${this.color.toHexString()}00`);
-    this.$container.style.setProperty('--alpha-slider-background-100', `${this.color.toHexString()}`);
+    if(!this._$container) return;
+    this._$container.style.setProperty('--value', this.color.toRgbString());
+    this._$container.style.setProperty('--alpha-slider-background-0', `${this.color.toHexString()}00`);
+    this._$container.style.setProperty('--alpha-slider-background-100', `${this.color.toHexString()}`);
   }
 
   _formatsChanged() {
@@ -528,7 +574,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   }
 
   _selectedFormatChanged() {
-    this.$grid.style.setProperty('--grid-gradient', this._gridGradient);
+    this._$container.style.setProperty('--grid-gradient', this._gridGradient);
     this._setGridThumbPosition();
   }
 
@@ -544,35 +590,35 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   }
 
   _setGridThumbPosition() {
-    if(!this.$grid) return;
+    if(!this._$container) return;
 
     const saturation = (this.selectedFormat === 'hsl') ? this.hsl.s : this.hsv.s;
     const value = (this.selectedFormat === 'hsl') ? this.hsl.l : this.hsv.v;
-    const thumbX = this.$grid.offsetWidth * saturation;
-    const thumbY = this.$grid.offsetHeight * (1-value);
-    this.$grid.style.setProperty('--grid-offset-x', `${thumbX}px`);
-    this.$grid.style.setProperty('--grid-offset-y', `${thumbY}px`);
-    this.$grid.style.setProperty('--grid-background', new TinyColor({h: this.color.toHsl().h, s: 100, v: 100}).toRgbString());
+    const thumbX = this._$container.offsetWidth * saturation;
+    const thumbY = this._$container.offsetHeight * (1-value);
+    this._$container.style.setProperty('--grid-offset-x', `${thumbX}px`);
+    this._$container.style.setProperty('--grid-offset-y', `${thumbY}px`);
+    this._$container.style.setProperty('--grid-background', new TinyColor({h: this.color.toHsl().h, s: 100, v: 100}).toRgbString());
   }
 
   _setHighlightColors() {
-    if(!this.$container) return;
-    const bgColor = new TinyColor(window.getComputedStyle(this.$container).backgroundColor);
+    if(!this._$container) return;
+    const bgColor = new TinyColor(window.getComputedStyle(this._$container).backgroundColor);
     const method = bgColor.isLight() ? 'darken' : 'brighten';
-    this.$container && this.$container.style.setProperty('--bg-color--10', bgColor[method]()[method]().toRgbString());
-    this.$container && this.$container.style.setProperty('--bg-color--20', bgColor[method]()[method]().toRgbString());
-    this.$container && this.$container.style.setProperty('--bg-color--60', bgColor[method]()[method]()[method]()[method]()[method]()[method]().toRgbString());
+    this._$container && this._$container.style.setProperty('--bg-color--10', bgColor[method]()[method]().toRgbString());
+    this._$container && this._$container.style.setProperty('--bg-color--20', bgColor[method]()[method]().toRgbString());
+    this._$container && this._$container.style.setProperty('--bg-color--60', bgColor[method]()[method]()[method]()[method]()[method]()[method]().toRgbString());
   }
 
   get _thumbStyles() {
     return new ColorPickerSlider()._thumbStyles;
   }
 
-  get $container() {
+  get _$container() {
     return this.shadowRoot.querySelector('#container');
   }
 
-  get $grid() {
+  get _$container() {
     return this.shadowRoot.querySelector('#gridInput');
   }
 

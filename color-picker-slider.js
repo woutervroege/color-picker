@@ -3,6 +3,9 @@ import { enableFocusVisible } from '../utils/focus-visible-polyfill.js';
 
 export class ColorPickerSlider extends HTMLInputElement {
 
+  /**
+   * @private
+   */
   get styles() {
     return html`
       <style>
@@ -106,6 +109,9 @@ export class ColorPickerSlider extends HTMLInputElement {
     enableFocusVisible(this);
   }
 
+  /**
+   * @private
+   */
   get type() {
     return 'range';
   }
