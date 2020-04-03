@@ -1,4 +1,5 @@
 import { Properties } from 'html-element-property-mixins';
+import { ObjectConverter } from 'html-element-property-mixins/src/utils/attribute-converters';
 import { PropertyChangedHandler, PropertiesChangedHandler, PropertiesChangedCallback } from 'html-element-property-mixins/src/addons';
 import { TinyColor } from '@ctrl/tinycolor';
 import { render, html } from 'lit-html';
@@ -16,10 +17,19 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
         changedHandler: '_valueChanged'
       },
 
-      format: {
+      formats: {
         observe: true,
         DOM: true,
-        changedHandler: '_formatChanged'
+        fromAttributeConverter: function(oldValue, newValue) {
+          return newValue.replace(/\s+/g, '').split(',');
+        },
+        changedHandler: '_formatsChanged'
+      },
+
+      selectedFormat: {
+        observe: true,
+        DOM: true,
+        changedHandler: '_selectedFormatChanged'
       },
 
       _pointerDown: {
@@ -34,58 +44,74 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   }
 
   get value() {
-    return this['#value'];
+    if(!this.color) return undefined;
+    if(this.selectedFormat === 'hex') return this.color.toHexString();
+    if(this.selectedFormat === 'hex8') return this.color.toHex8String();
+    if(this.selectedFormat === 'hsl') return this.color.toHslString();
+    if(this.selectedFormat === 'hsv') return this.color.toHsvString();
+    return this.color.toRgbString();
   }
 
   set value(val) {
     this['#value'] = new TinyColor(val);
   }
 
+  get color() {
+    return this['#value'];
+  }
+
+  set formats(val) {
+    if(val.constructor.name !== 'Array') return;
+    const formats = [];
+    for(var i in val) if(this.supportedFormats.indexOf(val[i]) !== -1) formats.push(val[i]);
+    this['#formats'] = [...formats];
+  }
+
   get supportedFormats() {
     return ['hex', 'hex8', 'rgb', 'hsv', 'hsl'];
   }
 
-  get format() {
+  get selectedFormat() {
     return this['#format'];
   }
 
-  set format(val) {
+  set selectedFormat(val) {
     if(this.supportedFormats.indexOf(val) === -1) return;
     this['#format'] = val;
   }
 
   get hsv() {
-    return this.value.toHsv();
+    return this.color.toHsv();
   }
 
   get alpha() {
-    return this.value.getAlpha();
+    return this.color.getAlpha();
   }
 
   set alpha(alpha) {
-    const oldVal = this.value;
-    this.value.setAlpha(alpha);
-    this.propertyChangedCallback('value', oldVal, this.value);
+    const oldVal = this.color;
+    this.color.setAlpha(alpha);
+    this.propertyChangedCallback('value', oldVal, this.color);
   }
 
   get hex() {
-    return this.value.toHex();
+    return this.color.toHex();
   }
 
   get hex8() {
-    return this.value.toHex8();
+    return this.color.toHex8();
   }
 
   get rgb() {
-    return this.value.toRgb();
+    return this.color.toRgb();
   }
 
   get hsl() {
-    return this.value.toHsl();
+    return this.color.toHsl();
   }
 
   get _gridGradient() {
-    if(this.format === 'hsl') return 'linear-gradient(to bottom, hsl(0, 0%, 100%) 0%, hsla(0, 0%, 100%, 0) 50%, hsla(0, 0%, 0%, 0) 50%, hsl(0, 0%, 0%) 100%), linear-gradient(to right, hsl(0, 0%, 50%) 0%, hsla(0, 0%, 50%, 0) 100%)';
+    if(this.selectedFormat === 'hsl') return 'linear-gradient(to bottom, hsl(0, 0%, 100%) 0%, hsla(0, 0%, 100%, 0) 50%, hsla(0, 0%, 0%, 0) 50%, hsl(0, 0%, 0%) 100%), linear-gradient(to right, hsl(0, 0%, 50%) 0%, hsla(0, 0%, 50%, 0) 100%)';
     return 'linear-gradient(rgba(0,0,0,0) 0%, #000 100%), linear-gradient(to left, rgba(255,255,255,0) 0%, #fff 100%)';
   }
 
@@ -94,9 +120,10 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     this.attachShadow({mode: 'open'});
     
     this.value = {h: 0, s: 1, v: 1};
-    this.format = 'rgb';
+    this.selectedFormat = 'rgb';
     this._pointerDown = false;
     this._sliderDown = false;
+    this.formats = this.supportedFormats;
 
     window.addEventListener('mouseup', this._handleMouseup.bind(this), false);
     window.addEventListener('mousemove', this._handleMousemove.bind(this), false);
@@ -377,39 +404,39 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
         <section id="textInput">
 
-          <select .selectedIndex="${this.supportedFormats.indexOf(this.format)}" @input="${this._handleSelectInput}">
-            ${this.supportedFormats.map(format => html`
+          <select .selectedIndex="${(this.formats || []).indexOf(this.selectedFormat)}" @input="${this._handleSelectInput}">
+            ${(this.formats || []).map(format => html`
               <option .value="${format}">${format.toUpperCase()}</option>
             `)}
           </select>
 
-          <div ?hidden="${this.format !== 'hsv'}" class="color-input">
+          <div ?hidden="${this.selectedFormat !== 'hsv'}" class="color-input">
             <label data-name="h"><input type="number" .value="${Math.round(this.hsv.h)}" min="0" max="359" step="1" data-scheme="hsv", data-key="h" @input="${this._handleInput}"></label>
             <label data-name="s"><input type="number" .value="${Math.round(this.hsv.s * 100)}" min="0" max="100" step="1" data-scheme="hsv", data-key="s" @input="${this._handleInput}"></label>
             <label data-name="v"><input type="number" .value="${Math.round(this.hsv.v * 100)}" min="0" max="100" step="1" data-scheme="hsv", data-key="v" @input="${this._handleInput}"></label>
           </div>
 
-          <div ?hidden="${this.format !== 'hsl'}" class="color-input">
+          <div ?hidden="${this.selectedFormat !== 'hsl'}" class="color-input">
             <label data-name="h"><input type="number" .value="${Math.round(this.hsl.h)}" min="0" max="359" step="1" data-scheme="hsl", data-key="h" @input="${this._handleInput}"></label>
             <label data-name="s"><input type="number" .value="${Math.round(this.hsl.s * 100)}" min="0" max="100" step="1" data-scheme="hsl", data-key="s" @input="${this._handleInput}"></label>
             <label data-name="l"><input type="number" .value="${Math.round(this.hsl.l * 100)}" min="0" max="100" step="1" data-scheme="hsl", data-key="l" @input="${this._handleInput}"></label>
           </div>
 
-          <div ?hidden="${this.format !== 'rgb'}" class="color-input">
+          <div ?hidden="${this.selectedFormat !== 'rgb'}" class="color-input">
             <label data-name="r"><input type="number" .value="${this.rgb.r}" min="0" max="255" step="1" data-scheme="rgb", data-key="r" @input="${this._handleInput}"></label>
             <label data-name="g"><input type="number" .value="${this.rgb.g}" min="0" max="255" step="1" data-scheme="rgb", data-key="g" @input="${this._handleInput}"></label>
             <label data-name="b"><input type="number" .value="${this.rgb.b}" min="0" max="255" step="1" data-scheme="rgb", data-key="b" @input="${this._handleInput}"></label>
           </div>
 
-          <div ?hidden="${this.format !== 'hex'}" class="color-input">
+          <div ?hidden="${this.selectedFormat !== 'hex'}" class="color-input">
             <label data-name="#"><input type="text" .value="${this.hex}" data-scheme="hex" maxlength="6" @change="${this._handleInput}"></label>
           </div>
 
-          <div ?hidden="${this.format !== 'hex8'}" class="color-input">
+          <div ?hidden="${this.selectedFormat !== 'hex8'}" class="color-input">
           <label data-name="#"><input type="text" .value="${this.hex8}" data-scheme="hex8" maxlength="8" @change="${this._handleInput}"></label>
           </div>
 
-          <div class="alpha-input" ?hidden="${this.format === 'hex8'}">
+          <div class="alpha-input" ?hidden="${this.selectedFormat === 'hex8'}">
             <label data-name="%"><input type="number" .value="${Math.round(this.alpha * 100)}" min="0" max="100" step="1" data-scheme="alpha" @input="${this._handleAlphaInput}"></label>
           </div>
         
@@ -441,7 +468,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
   _handleSelectInput(e) {
     e.stopPropagation();
-    this.format = e.target.value;
+    this.selectedFormat = e.target.value;
   }
 
   _handleMouseup() {
@@ -452,8 +479,8 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     if(!this._pointerDown) return;
     const saturation = Math.min(Math.max((e.offsetX / this.$grid.offsetWidth), 0.01), 0.99);
     const value = 1 - Math.min(Math.max((e.offsetY / this.$grid.offsetHeight), 0.01), 0.99);
-    if(this.format === 'hsl') this.value = {...this.value.toHsl(), ...{s: saturation}, ...{l: value}};
-    else this.value = {...this.value.toHsv(), ...{s: saturation}, ...{v: value}};
+    if(this.selectedFormat === 'hsl') this.value = {...this.color.toHsl(), ...{s: saturation}, ...{l: value}};
+    else this.value = {...this.color.toHsv(), ...{s: saturation}, ...{v: value}};
   }
 
   _handleMousedown() {
@@ -461,20 +488,20 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   }
 
   _handleGridKeydown(e) {
-    const hsl = this.value.toHsl();
-    const hsv = this.value.toHsv();
+    const hsl = this.color.toHsl();
+    const hsv = this.color.toHsv();
 
-    if(e.key === 'ArrowLeft') return this.value = (this.format === 'hsl') ? {...hsl, ...{s: hsl.s-0.01}} : {...hsv, ...{s: hsv.s-0.01}};
-    if(e.key === 'ArrowRight') return this.value = (this.format === 'hsl') ? {...hsl, ...{s: hsl.s+0.01}} : {...hsv, ...{s: hsv.s+0.01}};
+    if(e.key === 'ArrowLeft') return this.value = (this.selectedFormat === 'hsl') ? {...hsl, ...{s: hsl.s-0.01}} : {...hsv, ...{s: hsv.s-0.01}};
+    if(e.key === 'ArrowRight') return this.value = (this.selectedFormat === 'hsl') ? {...hsl, ...{s: hsl.s+0.01}} : {...hsv, ...{s: hsv.s+0.01}};
 
-    if(e.key === 'ArrowUp') return this.value = (this.format === 'hsl') ? {...hsl, ...{l: hsl.l+0.01}} : {...hsv, ...{v: hsv.v+0.01}};
-    if(e.key === 'ArrowDown') return this.value = (this.format === 'hsl') ? {...hsl, ...{l: hsl.l-0.01}} : {...hsv, ...{v: hsv.v-0.01}};
+    if(e.key === 'ArrowUp') return this.value = (this.selectedFormat === 'hsl') ? {...hsl, ...{l: hsl.l+0.01}} : {...hsv, ...{v: hsv.v+0.01}};
+    if(e.key === 'ArrowDown') return this.value = (this.selectedFormat === 'hsl') ? {...hsl, ...{l: hsl.l-0.01}} : {...hsv, ...{v: hsv.v-0.01}};
 
-    if(e.key === 'Home') return this.value = (this.format === 'hsl') ? {...hsl, ...{s: hsl.s-0.10}} : {...hsv, ...{s: hsv.s-0.10}};
-    if(e.key === 'End') return this.value = (this.format === 'hsl') ? {...hsl, ...{s: hsl.s+0.10}} : {...hsv, ...{s: hsv.s+0.10}};
+    if(e.key === 'Home') return this.value = (this.selectedFormat === 'hsl') ? {...hsl, ...{s: hsl.s-0.10}} : {...hsv, ...{s: hsv.s-0.10}};
+    if(e.key === 'End') return this.value = (this.selectedFormat === 'hsl') ? {...hsl, ...{s: hsl.s+0.10}} : {...hsv, ...{s: hsv.s+0.10}};
 
-    if(e.key === 'PageUp') return this.value = (this.format === 'hsl') ? {...hsl, ...{l: hsl.l+0.10}} : {...hsv, ...{v: hsv.v+0.10}};
-    if(e.key === 'PageDown') return this.value = (this.format === 'hsl') ? {...hsl, ...{l: hsl.l-0.10}} : {...hsv, ...{v: hsv.v-0.10}};
+    if(e.key === 'PageUp') return this.value = (this.selectedFormat === 'hsl') ? {...hsl, ...{l: hsl.l+0.10}} : {...hsv, ...{v: hsv.v+0.10}};
+    if(e.key === 'PageDown') return this.value = (this.selectedFormat === 'hsl') ? {...hsl, ...{l: hsl.l-0.10}} : {...hsv, ...{v: hsv.v-0.10}};
   }
 
   _handleGridClick(e) {
@@ -487,13 +514,16 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     this._setGridThumbPosition();
     this._setHighlightColors();
     if(!this.$container) return;
-    this.$container.style.setProperty('--value', this.value.toRgbString());
-    this.$container.style.setProperty('--alpha-slider-background-0', `${this.value.toHexString()}00`);
-    this.$container.style.setProperty('--alpha-slider-background-100', `${this.value.toHexString()}`);
-
+    this.$container.style.setProperty('--value', this.color.toRgbString());
+    this.$container.style.setProperty('--alpha-slider-background-0', `${this.color.toHexString()}00`);
+    this.$container.style.setProperty('--alpha-slider-background-100', `${this.color.toHexString()}`);
   }
 
-  _formatChanged() {
+  _formatsChanged() {
+    if(this.formats.indexOf(this.selectedFormat) === -1) this.selectedFormat = this.formats[0];
+  }
+
+  _selectedFormatChanged() {
     this.$grid.style.setProperty('--grid-gradient', this._gridGradient);
     this._setGridThumbPosition();
   }
@@ -512,13 +542,13 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   _setGridThumbPosition() {
     if(!this.$grid) return;
 
-    const saturation = (this.format === 'hsl') ? this.hsl.s : this.hsv.s;
-    const value = (this.format === 'hsl') ? this.hsl.l : this.hsv.v;
+    const saturation = (this.selectedFormat === 'hsl') ? this.hsl.s : this.hsv.s;
+    const value = (this.selectedFormat === 'hsl') ? this.hsl.l : this.hsv.v;
     const thumbX = this.$grid.offsetWidth * saturation;
     const thumbY = this.$grid.offsetHeight * (1-value);
     this.$grid.style.setProperty('--grid-offset-x', `${thumbX}px`);
     this.$grid.style.setProperty('--grid-offset-y', `${thumbY}px`);
-    this.$grid.style.setProperty('--grid-background', new TinyColor({h: this.value.toHsl().h, s: 100, v: 100}).toRgbString());
+    this.$grid.style.setProperty('--grid-background', new TinyColor({h: this.color.toHsl().h, s: 100, v: 100}).toRgbString());
   }
 
   _setHighlightColors() {
