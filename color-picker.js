@@ -240,6 +240,10 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           -moz-appearance: textfield;
         }
 
+        input[type="text"] {
+          min-width: 80px;
+        }
+
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
           -webkit-appearance: none;
@@ -297,10 +301,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
         .color-input {
           flex: 0;
           display: flex;
-        }
-
-        .color-input.text {
-          flex: none;
+          justify-content: flex-start;
         }
 
         input {
@@ -365,11 +366,11 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
             <label data-name="b"><input type="number" .value="${this.rgb.b}" min="0" max="255" step="1" data-scheme="rgb", data-key="b" @input="${this._handleInput}"></label>
           </div>
 
-          <div ?hidden="${this.format !== 'hex'}" class="color-input text">
+          <div ?hidden="${this.format !== 'hex'}" class="color-input">
             <label data-name="#"><input type="text" .value="${this.hex}" data-scheme="hex" maxlength="6" @change="${this._handleInput}"></label>
           </div>
 
-          <div ?hidden="${this.format !== 'hex8'}" class="color-input text">
+          <div ?hidden="${this.format !== 'hex8'}" class="color-input">
           <label data-name="#"><input type="text" .value="${this.hex8}" data-scheme="hex8" maxlength="8" @change="${this._handleInput}"></label>
           </div>
 
@@ -451,8 +452,8 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     this._setGridThumbPosition();
     if(!this.$container) return;
     this.$container.style.setProperty('--value', this.value.toRgbString());
-    this.$container.style.setProperty('--alpha-slider-background-0', `${this.value.toHexString()}00`)
-    this.$container.style.setProperty('--alpha-slider-background-100', `${this.value.toHexString()}`)
+    this.$container.style.setProperty('--alpha-slider-background-0', `${this.value.toHexString()}00`);
+    this.$container.style.setProperty('--alpha-slider-background-100', `${this.value.toHexString()}`);
   }
 
   _formatChanged() {
@@ -488,11 +489,11 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   }
 
   get $container() {
-    return this.shadowRoot.querySelector('#container')
+    return this.shadowRoot.querySelector('#container');
   }
 
   get $grid() {
-    return this.shadowRoot.querySelector('#gridInput')
+    return this.shadowRoot.querySelector('#gridInput');
   }
 
 }
