@@ -4,7 +4,7 @@ color-picker is a custom Element powered by @bgins TinyColor library.
 - Supports hex, rgb(a), rrggbbaa/hex8, hsl(a) and hsv/b(a) color schemes.
 - Fully keyboard accessible
 
-![screenshot](https://raw.github.com/woutervroege/color-picker-element/master/screenshot.gif)
+[![screenshot.gif](https://i.postimg.cc/T29LHm2m/screenshot.gif)](https://postimg.cc/grx2xxZk)
 
 ```html
 <color-picker
