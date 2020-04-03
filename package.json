@@ -11,13 +11,21 @@
   "license": "MIT",
   "dependencies": {
     "@ctrl/tinycolor": "^2.6.1",
-    "@html-element-wrappers/input": "^0.3.1",
+    "@color-picker-element/input": "^0.3.1",
     "html-element-property-mixins": "^0.10.3"
   },
   "devDependencies": {
     "es-dev-server": "^1.46.0",
     "husky": "^4.2.3",
     "lit-html": "^1.2.1"
+  },
+  "homepage": "https://github.com/woutervroege/color-picker-element#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/woutervroege/color-picker-element.git"
+  },
+  "bugs": {
+    "url": "https://github.com/woutervroege/color-picker-element/issues"
   },
   "keywords": [
     "tinycolor",
