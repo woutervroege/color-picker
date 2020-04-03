@@ -19,8 +19,6 @@ picker.addEventlistener('input', (e) => console.info('input', e.detail.value))
 picker.addEventlistener('change', (e) => console.info('change', e.detail.value))
 ```
 
-**Mixins:** PropertiesChangedHandler, PropertiesChangedCallback, PropertyChangedHandler, Properties
-
 ## Attributes
 
 | Attribute        | Type      | Description                                      |
