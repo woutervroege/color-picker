@@ -130,7 +130,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           width: 240px;
           height: 240px;
           display: block;
-          font-family: sans-serif;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
           --color-picker-background-color: #fff;
           --color-picker-color: #222;
         }
@@ -272,6 +272,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           min-width: 44px;
           color: inherit;
           -moz-appearance: textfield;
+          font-family: inherit;
         }
 
         input[type="text"] {
