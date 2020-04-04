@@ -3,7 +3,7 @@ import { PropertyChangedHandler, PropertiesChangedHandler, PropertiesChangedCall
 import { TinyColor } from '@ctrl/tinycolor';
 import { render, html } from 'lit-html';
 import { ColorPickerSlider } from './color-picker-slider.js';
-import { enableFocusVisible } from '../utils/focus-visible-polyfill.js';
+import { enableFocusVisible } from './utils/focus-visible-polyfill.js';
 
 /**
  * color-picker is a custom Element powered by @bgins TinyColor library.
