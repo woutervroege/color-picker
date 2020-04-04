@@ -532,8 +532,9 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
   _handleMousemove(e) {
     if(!this._pointerDown) return;
-    const saturation = Math.min(Math.max((e.offsetX / this._$grid.offsetWidth), 0.01), 0.99);
-    const value = 1 - Math.min(Math.max((e.offsetY / this._$grid.offsetHeight), 0.01), 0.99);
+    const saturation = Math.min(Math.max((e.offsetX / this._$grid.offsetWidth), 0), 0.99);
+    const value = 0.99 - Math.min(Math.max((e.offsetY / this._$grid.offsetHeight), 0), 0.99);
+    console.info(saturation, value);
     if(this.selectedFormat === 'hsl') this.value = {...this.color.toHsl(), ...{s: saturation}, ...{l: value}};
     else this.value = {...this.color.toHsv(), ...{s: saturation}, ...{v: value}};
   }
