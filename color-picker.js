@@ -406,15 +406,11 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
         .color-input label, .alpha-input label {
           position: relative;
           display: block;
-          height: 36px;
         }
         
         .color-input label:after, .alpha-input label:after {
           content: attr(data-name);
           font-size: 10px;
-          position: absolute;
-          top: 20px;
-          left: 0;
           width: 100%;
           text-align: center;
           text-transform: uppercase;
