@@ -442,6 +442,8 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           class="absbefore absafter"
           tabindex="0"
           aria-label="change saturation and ${this.selectedFormat === 'hsl' ? 'light' : 'value'}"
+          role="slider"
+          aria-valuetext="saturation ${this.hsv.s.toFixed(2)} ${this.selectedFormat === 'hsl' ? `light ${this.hsl.l.toFixed(2)}` : `value ${this.hsv.v.toFixed(2)}`}"
           @mousedown="${this._handleMousedown}"
           @keydown="${this._handleGridKeydown}"
           @click="${this._handleGridClick}"
@@ -541,8 +543,14 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   }
 
   _handleGridKeydown(e) {
+
+    if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End','PageUp','PageDown'].indexOf(e.key) === -1) return;
+    e.preventDefault();
+
     const hsl = this.color.toHsl();
     const hsv = this.color.toHsv();
+
+    if(e.key.indexOf())
 
     if(e.key === 'ArrowLeft') return this.value = (this.selectedFormat === 'hsl') ? {...hsl, ...{s: hsl.s-0.01}} : {...hsv, ...{s: hsv.s-0.01}};
     if(e.key === 'ArrowRight') return this.value = (this.selectedFormat === 'hsl') ? {...hsl, ...{s: hsl.s+0.01}} : {...hsv, ...{s: hsv.s+0.01}};
