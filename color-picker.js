@@ -451,8 +451,8 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
         <section id="sliderInput">
           <div id="sliders">
-            <color-picker-slider .label="${'change hue'}" id="hueInput" .value="${this.hsv.h}" min="0" max="359" step="1" data-scheme="hsv" data-key="h" @input="${this._handleInput}" @mousedown="${() => this._sliderDown = true}" @mouseup="${() => this._sliderDown = false}"></color-picker-slider>
-            <color-picker-slider .label="${'change alpha'}" id="alphaInput" class="absbefore absafter checkerboard" .value="${this.alpha}" min="0" max="1" step="0.01" @input="${this._handleAlphaSliderInput}" @mousedown="${() => this._sliderDown = true}" @mouseup="${() => this._sliderDown = false}"></color-picker-slider>
+            <color-picker-slider tabindex="0" .label="${'change hue'}" id="hueInput" .value="${this.hsv.h}" min="0" max="359" step="1" data-scheme="hsv" data-key="h" @input="${this._handleInput}" @mousedown="${() => this._sliderDown = true}" @mouseup="${() => this._sliderDown = false}"></color-picker-slider>
+            <color-picker-slider tabindex="0" .label="${'change alpha'}" id="alphaInput" class="absbefore absafter checkerboard" .value="${this.alpha}" min="0" max="1" step="0.01" @input="${this._handleAlphaSliderInput}" @mousedown="${() => this._sliderDown = true}" @mouseup="${() => this._sliderDown = false}"></color-picker-slider>
           </div>
           <div id="colorSteel" class="absbefore absafter checkerboard"></div>
         </section>
