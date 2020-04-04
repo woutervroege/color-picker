@@ -1,7 +1,17 @@
 import { HTMLInputElement, html } from '@html-element-wrappers/input';
 import { enableFocusVisible } from '../utils/focus-visible-polyfill.js';
+import { PropertyChangedHandler } from 'html-element-property-mixins/src/addons';
 
-export class ColorPickerSlider extends HTMLInputElement {
+export class ColorPickerSlider extends PropertyChangedHandler(HTMLInputElement) {
+
+  static get properties() {
+    return {...super.properties, ...{
+      label: {
+        observe: true,
+        changedHandler: '_labelChanged'
+      }
+    }};
+  }
 
   /**
    * @private
@@ -109,11 +119,21 @@ export class ColorPickerSlider extends HTMLInputElement {
     enableFocusVisible(this);
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    window.requestAnimationFrame(() => this._labelChanged());
+  }
+
   /**
    * @private
    */
   get type() {
     return 'range';
+  }
+
+  _labelChanged() {
+    if(!this.$element.setAttribute) return;
+    this.$element.setAttribute('aria-label', this.label);
   }
   
 }
