@@ -226,7 +226,12 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           }
         }
 
-        :host([dark]) {
+        color-picker[dark], :host([dark]) {
+          --color-picker-background-color: #222;
+          --color-picker-color: #fff;          
+        }
+
+        color-picker[dark] {
           --color-picker-background-color: #222;
           --color-picker-color: #fff;          
         }
@@ -666,7 +671,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
       --color-picker-color: #222;
       --color-picker-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
       font-family: var(--color-picker-font-family);
-    `
+    `;
   }
 
 }
