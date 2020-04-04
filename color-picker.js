@@ -207,13 +207,11 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
         }
 
         :host {
-          width: 240px;
-          height: 240px;
-          display: block;
-          --color-picker-background-color: #fff;
-          --color-picker-color: #222;
-          --color-picker-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-          font-family: var(--color-picker-font-family);
+          ${this._hostStyles}
+        }
+
+        color-picker {
+          ${this._hostStyles}
         }
 
         :host([light]) {
@@ -658,6 +656,18 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
   get _$grid() {
     return this.shadowRoot.querySelector('#gridInput');
+  }
+
+  get _hostStyles() {
+    return `
+      width: 240px;
+      height: 240px;
+      display: block;
+      --color-picker-background-color: #fff;
+      --color-picker-color: #222;
+      --color-picker-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      font-family: var(--color-picker-font-family);
+    `
   }
 
 }
