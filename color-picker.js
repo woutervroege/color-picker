@@ -203,15 +203,17 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
         *, *:before, *:after {
           box-sizing: border-box;
           font-size: 0;
+          font-family: var(--color-picker-font-family);
         }
 
         :host {
           width: 240px;
           height: 240px;
           display: block;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
           --color-picker-background-color: #fff;
           --color-picker-color: #222;
+          --color-picker-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+          font-family: var(--color-picker-font-family);
         }
 
         :host([light]) {
@@ -286,17 +288,43 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           margin-right: 8px;
         }
 
+        color-picker-slider {
+          position: relative;
+          /* edge fix */
+          outline: none;
+          user-select: none;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+          display: inline-block;
+          background: transparent;
+          padding: 0;
+          border-radius: 10px;
+          height: 14px;
+          /* edge fix */
+        }
+
         color-picker-slider:nth-child(1) {
           margin-bottom: 8px;
         }
 
-        #hueInput {
-          --color-picker-slider-track-background: linear-gradient(to right, red 0%, #ff0 17%, lime 33%, cyan 50%, blue 66%, #f0f 83%, red 100%);
+        color-picker-slider:after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border-radius: inherit;
         }
 
-        #alphaInput {
-          position: relative;
-          --color-picker-slider-track-background: linear-gradient(to right, var(--alpha-slider-background-0) 0%, var(--alpha-slider-background-100) 100%);
+        #hueInput:after {
+          background: linear-gradient(to right, red 0%, #ff0 17%, lime 33%, cyan 50%, blue 66%, #f0f 83%, red 100%);
+        }
+
+        #alphaInput:after {
+          background: linear-gradient(to right, var(--alpha-slider-background-0) 0%, var(--alpha-slider-background-100) 100%);
         }
 
         #alphaInput:before, #alphaInput:after {
@@ -351,7 +379,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           min-width: 44px;
           color: inherit;
           -moz-appearance: textfield;
-          font-family: inherit;
+          font-family: var(--color-picker-font-family);
         }
 
         input[type="text"] {
@@ -579,8 +607,8 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     this._setHighlightColors();
     if(!this._$container) return;
     this._$container.style.setProperty('--value', this.color.toRgbString());
-    this._$container.style.setProperty('--alpha-slider-background-0', `${this.color.toHexString()}00`);
-    this._$container.style.setProperty('--alpha-slider-background-100', `${this.color.toHexString()}`);
+    this._$container.style.setProperty('--alpha-slider-background-0', `${this.color.setAlpha(0).toRgbString()}`);
+    this._$container.style.setProperty('--alpha-slider-background-100', `${this.color.setAlpha(1).toRgbString()}`);
   }
 
   _formatsChanged() {

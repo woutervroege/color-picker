@@ -21,28 +21,22 @@ export class ColorPickerSlider extends PropertyChangedHandler(HTMLInputElement) 
       <style>
         
         :host {
-          outline: none;
-          user-select: none;
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-          display: inline-block;
-          font-size: 0;
-          background: transparent;
-          padding: 0;
-          border-radius: 10px;
+          display: block;
         }
 
-        input {
+        input[type="range"] {
           -webkit-appearance: none;
           -moz-appearance: none;
           -ms-appearance: none;
           width: 100%;
+          height: 100%;
           background: transparent;
           position: relative;
           margin: 0;
+          padding: 0;
+          font-size: 0;
           outline: none;
+          z-index: 1;
         }
 
         :host(.focus-visible) input {
@@ -50,7 +44,7 @@ export class ColorPickerSlider extends PropertyChangedHandler(HTMLInputElement) 
           outline-style: auto;
         }
 
-        input[type=range]::-webkit-slider-thumb {
+        input[type="range"]::-webkit-slider-thumb {
           -webkit-appearance: none;
           -moz-appearance: none;
           -ms-appearance: none;
@@ -64,27 +58,27 @@ export class ColorPickerSlider extends PropertyChangedHandler(HTMLInputElement) 
           color: transparent;
         }
 
-        input[type=range]::-webkit-slider-thumb {
+        input[type="range"]::-webkit-slider-thumb {
           ${this._thumbStyles}
         }
 
-        input[type=range]::-moz-range-thumb {
+        input[type="range"]::-moz-range-thumb {
           ${this._thumbStyles}
         }
 
-        input[type=range]::-ms-thumb {
-          ${this._thumbStyles} 
+        input[type="range"]::-ms-thumb {
+          ${this._thumbStyles}
         }
 
-        input[type=range]::-webkit-slider-runnable-track {
+        input[type="range"]::-webkit-slider-runnable-track {
           ${this._trackStyles}
         }
 
-        input[type=range]::-moz-range-track {
+        input[type="range"]::-moz-range-track {
           ${this._trackStyles}
         }
 
-        input[type=range]::-ms-track {
+        input[type="range"]::-ms-track {
           ${this._trackStyles}
         }
 
@@ -94,23 +88,22 @@ export class ColorPickerSlider extends PropertyChangedHandler(HTMLInputElement) 
 
   get _thumbStyles() {
     return `
-    height: 14px;
-    width: 14px;
-    background: transparent;
-    border: 2px solid white;
-    box-shadow: 0 0 2px rgba(0,0,0,0.4), inset 0 0 2px rgba(0,0,0,0.4);
-    border-radius: 50%;
-    box-sizing: border-box;
-    content: '';
-`;
+      height: 14px;
+      width: 14px;
+      background: transparent;
+      border: 2px solid white;
+      box-shadow: 0 0 2px rgba(0,0,0,0.4), inset 0 0 2px rgba(0,0,0,0.4);
+      border-radius: 50%;
+      box-sizing: border-box;
+      content: '';
+    `;
   }
 
   get _trackStyles() {
     return `
-      height: 14px;
+      height: 100%;
       width: 100%;
-      background: var(--color-picker-slider-track-background, black);
-      border-radius: 10px;
+      background: transparent;
     `;    
   }
 
