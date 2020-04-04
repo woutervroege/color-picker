@@ -484,7 +484,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
         <section id="textInput">
 
-          <select aria-label="select color scheme" .selectedIndex="${(this.formats || []).indexOf(this.selectedFormat)}" @input="${this._handleSelectInput}">
+          <select aria-label="select color scheme" .selectedIndex="${(this.formats || []).indexOf(this.selectedFormat)}" @change="${this._handleSelectChange}" @input="${e => e.stopPropagation()}">
             ${(this.formats || []).map(format => html`
               <option .value="${format}">${format.toUpperCase()}</option>
             `)}
@@ -509,11 +509,11 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           </div>
 
           <div ?hidden="${this.selectedFormat !== 'hex'}" class="color-input">
-            <label data-name="#"><input aria-label="change hex" type="text" .value="${this.hex}" data-scheme="hex" maxlength="6" @change="${this._handleInput}"></label>
+            <label data-name="#"><input aria-label="change hex" type="text" .value="${this.hex}" data-scheme="hex" maxlength="6" @change="${this._handleInput}" @input="${e => e.stopPropagation()}"></label>
           </div>
 
           <div ?hidden="${this.selectedFormat !== 'hex8'}" class="color-input">
-          <label data-name="#"><input aria-label="change hex8" type="text" .value="${this.hex8}" data-scheme="hex8" maxlength="8" @change="${this._handleInput}"></label>
+          <label data-name="#"><input aria-label="change hex8" type="text" .value="${this.hex8}" data-scheme="hex8" maxlength="8" @change="${this._handleInput}" @input="${e => e.stopPropagation()}"></label>
           </div>
 
           <div class="alpha-input" ?hidden="${this.selectedFormat === 'hex8'}">
@@ -546,8 +546,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     this.alpha = e.target.value / 100;
   }
 
-  _handleSelectInput(e) {
-    e.stopPropagation();
+  _handleSelectChange(e) {
     this.selectedFormat = e.target.value;
   }
 
