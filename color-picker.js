@@ -246,16 +246,25 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
         }
 
         #gridInput {
-          position: relative;
           width: 100%;
           background: var(--grid-background);
           outline: none;
           flex: 1;
         }
 
-        #gridInput:after {
+        #gridInput .overlay {
+          width: 100%;
+          height: 100%;
+          background: var(--grid-gradient);
+          pointer-events: none;
+          position: relative;
+        }        
+
+        #gridInput .overlay .thumb {
+          position: absolute;
           margin: -7px;
-          transform: translateX(var(--grid-offset-x, 0)) translateY(var(--grid-offset-y, 0));
+          pointer-events: none;
+          transform: translate(var(--grid-offset-x, 0), var(--grid-offset-y, 0));
           ${this._thumbStyles}
         }
 
@@ -271,11 +280,6 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           left: 0;
           width: 100%;
           height: 100%;
-          content: '';
-        }
-
-        #gridInput:before {
-          background: var(--grid-gradient);
           content: '';
         }
 
@@ -466,7 +470,6 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
         <section
           id="gridInput"
-          class="absbefore absafter"
           tabindex="0"
           role="slider"
           aria-label="change saturation and ${this.selectedFormat === 'hsl' ? 'light' : 'value'}"
@@ -477,7 +480,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           @mousedown="${this._handleMousedown}"
           @keydown="${this._handleGridKeydown}"
           @click="${this._handleGridClick}"
-        ></section>
+        ><div class="overlay"><div class="thumb"></div></div></section>
 
         <section id="sliderInput">
           <div id="sliders">
