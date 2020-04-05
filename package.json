@@ -1,6 +1,6 @@
 {
   "name": "color-picker-element",
-  "version": "0.11.3",
+  "version": "0.11.4",
   "description": "Color Picker Web Component",
   "main": "color-picker.js",
   "scripts": {
