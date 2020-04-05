@@ -4,7 +4,7 @@
   "description": "Color Picker Web Component",
   "main": "color-picker.js",
   "scripts": {
-    "start": "es-dev-server --http2 --app-index ./ --node-resolve --open --watch",
+    "start": "es-dev-server --http2 --app-index ./ --node-resolve --open --watch --port 3000",
     "format": "eslint --ext .js . --fix --ignore-path .gitignore"
   },
   "author": "Wouter Vroege",
