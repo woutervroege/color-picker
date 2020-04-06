@@ -1,5 +1,5 @@
 import { HTMLInputElement, html } from '@html-element-wrappers/input';
-import { enableFocusVisible } from '../utils/focus-visible-polyfill.js';
+import { enableFocusVisible } from './utils/focus-visible-polyfill.js';
 import { PropertyChangedHandler } from 'html-element-property-mixins/src/addons';
 
 export class ColorPickerSlider extends PropertyChangedHandler(HTMLInputElement) {
