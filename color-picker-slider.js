@@ -74,6 +74,10 @@ export class ColorPickerSlider extends PropertyChangedHandler(HTMLInputElement) 
           ${this._trackStyles}
         }
 
+        input[type="range"]::-ms-fill-lower {
+          background: transparent;
+        }
+
       </style>
     `;
   }
@@ -106,7 +110,15 @@ export class ColorPickerSlider extends PropertyChangedHandler(HTMLInputElement) 
 
   connectedCallback() {
     super.connectedCallback();
-    window.requestAnimationFrame(() => this._labelChanged());
+    window.requestAnimationFrame(() => {
+      this._labelChanged()
+      this.$element.addEventListener('change', this._handleChange.bind(this));
+    });
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.$element.removeEventListener('change', this._handleChange.bind(this));
   }
 
   /**
@@ -119,6 +131,12 @@ export class ColorPickerSlider extends PropertyChangedHandler(HTMLInputElement) 
   _labelChanged() {
     if(!this.$element.setAttribute) return;
     this.$element.setAttribute('aria-label', this.label);
+  }
+
+  _handleChange(e) {
+    const evt = document.createEvent( 'CustomEvent' );
+    evt.initCustomEvent('change', e.bubbles, e.cancelable, e.detail);
+    this.dispatchEvent(evt);
   }
   
 }
