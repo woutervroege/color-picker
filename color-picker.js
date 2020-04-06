@@ -246,15 +246,17 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           width: 100%;
           outline: none;
           flex: 1;
+          position: relative;
         }
 
         #gridInput .overlay {
           width: 100%;
+          top: 0;
+          left: 0;
           height: 100%;
-          background: var(--grid-gradient);
           pointer-events: none;
-          position: relative;
-        }        
+          position: absolute;
+        }
 
         #gridInput .overlay .thumb {
           position: absolute;
