@@ -301,19 +301,6 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
         color-picker-slider {
           position: relative;
-          display: block;
-          outline: none;
-          user-select: none;
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-          display: inline-block;
-          background: transparent;
-          padding: 0;
-          border-radius: 10px;
-          height: 14px;
-          overflow: hidden;
         }
 
         color-picker-slider:nth-child(1) {

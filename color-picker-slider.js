@@ -20,6 +20,22 @@ export class ColorPickerSlider extends PropertyChangedHandler(HTMLInputElement) 
     return html`
       <style>
 
+        :host {
+          display: block;
+          outline: none;
+          user-select: none;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+          display: inline-block;
+          background: transparent;
+          padding: 0;
+          border-radius: 10px;
+          height: 14px;
+          overflow: hidden;
+        }
+
         input[type="range"] {
           -webkit-appearance: none;
           -moz-appearance: none;
