@@ -19,10 +19,6 @@ export class ColorPickerSlider extends PropertyChangedHandler(HTMLInputElement) 
   get styles() {
     return html`
       <style>
-        
-        :host {
-          display: block;
-        }
 
         input[type="range"] {
           -webkit-appearance: none;
@@ -46,39 +42,35 @@ export class ColorPickerSlider extends PropertyChangedHandler(HTMLInputElement) 
 
         input[type="range"]::-webkit-slider-thumb {
           -webkit-appearance: none;
-          -moz-appearance: none;
-          -ms-appearance: none;
-        }
-
-        input[type=range]::-ms-track {
-          width: 100%;
-          cursor: pointer;
-          background: transparent;
-          border-color: transparent;
-          color: transparent;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
           ${this._thumbStyles}
         }
 
         input[type="range"]::-moz-range-thumb {
+          -moz-appearance: none;
           ${this._thumbStyles}
         }
 
         input[type="range"]::-ms-thumb {
+          -ms-appearance: none;
           ${this._thumbStyles}
         }
 
         input[type="range"]::-webkit-slider-runnable-track {
+          -webkit-appearance: none;
           ${this._trackStyles}
         }
 
         input[type="range"]::-moz-range-track {
+          -moz-appearance: none;
           ${this._trackStyles}
         }
 
         input[type="range"]::-ms-track {
+          -ms-appearance: none;
+          cursor: pointer;
+          background: transparent;
+          border-color: transparent;
+          color: transparent;
           ${this._trackStyles}
         }
 

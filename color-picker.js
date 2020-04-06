@@ -1,7 +1,7 @@
 import { Properties } from 'html-element-property-mixins';
 import { PropertyChangedHandler, PropertiesChangedHandler, PropertiesChangedCallback } from 'html-element-property-mixins/src/addons';
 import { TinyColor } from '@ctrl/tinycolor';
-import { render, html } from 'lit-html';
+import { render, html } from 'lit-html/lib/shady-render';
 import { ColorPickerSlider } from './color-picker-slider.js';
 import { enableFocusVisible } from './utils/focus-visible-polyfill.js';
 
@@ -207,11 +207,13 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
         }
 
         :host {
-          ${this._hostStyles}
-        }
-
-        color-picker {
-          ${this._hostStyles}
+          width: 240px;
+          height: 240px;
+          display: block;
+          --color-picker-background-color: #fff;
+          --color-picker-color: #222;
+          --color-picker-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+          font-family: var(--color-picker-font-family);
         }
 
         :host([light]) {
@@ -226,12 +228,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           }
         }
 
-        color-picker[dark], :host([dark]) {
-          --color-picker-background-color: #222;
-          --color-picker-color: #fff;          
-        }
-
-        color-picker[dark] {
+        :host([dark]) {
           --color-picker-background-color: #222;
           --color-picker-color: #fff;          
         }
@@ -247,7 +244,6 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
         #gridInput {
           width: 100%;
-          background: var(--grid-background);
           outline: none;
           flex: 1;
         }
@@ -264,7 +260,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           position: absolute;
           margin: -7px;
           pointer-events: none;
-          transform: translate(var(--grid-offset-x, 0), var(--grid-offset-y, 0));
+          transform: ${this._thumbPosition};
           ${this._thumbStyles}
         }
 
@@ -297,7 +293,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
         color-picker-slider {
           position: relative;
-          /* edge fix */
+          display: block;
           outline: none;
           user-select: none;
           -webkit-user-select: none;
@@ -309,7 +305,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           padding: 0;
           border-radius: 10px;
           height: 14px;
-          /* edge fix */
+          overflow: hidden;
         }
 
         color-picker-slider:nth-child(1) {
@@ -331,7 +327,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
         }
 
         #alphaInput:after {
-          background: linear-gradient(to right, var(--alpha-slider-background-0) 0%, var(--alpha-slider-background-100) 100%);
+          background: ${this._alphaSliderBackground}
         }
 
         #alphaInput:before, #alphaInput:after {
@@ -351,19 +347,16 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           overflow: hidden;
         }
 
-        #colorSteel:before,
-        #colorSteel:after {
-          content: '';
-        }
-
         .checkerboard:before {
           background: linear-gradient(45deg, #777 25%, transparent 25%), linear-gradient(-45deg, #777 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #777 75%), linear-gradient(-45deg, transparent 75%, #777 75%);
           background-size: 6px 6px;
           background-position: 0 0, 0 3px, 3px -3px, -3px 0px;
         }
 
-        #colorSteel:after {
-          background: var(--value);
+        #colorSteel .inner {
+          width: 100%;
+          height: 100%;
+          position: relative;
         }
 
         input, select {
@@ -484,10 +477,12 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
         <section id="sliderInput">
           <div id="sliders">
-            <color-picker-slider tabindex="0" .label="${'change hue'}" id="hueInput" .value="${this.hsv.h}" min="0" max="359" step="1" data-scheme="hsv" data-key="h" @input="${this._handleInput}" @mousedown="${() => this._sliderDown = true}" @mouseup="${() => this._sliderDown = false}"></color-picker-slider>
-            <color-picker-slider tabindex="0" .label="${'change alpha'}" id="alphaInput" class="absbefore absafter checkerboard" .value="${this.alpha}" min="0" max="1" step="0.01" @input="${this._handleAlphaSliderInput}" @mousedown="${() => this._sliderDown = true}" @mouseup="${() => this._sliderDown = false}"></color-picker-slider>
+            <color-picker-slider tabindex="0" .label="${'change hue'}" id="hueInput" .value="${this.hsv.h}" min="0" max="359" step="1" data-scheme="hsv" data-key="h" @input="${this._handleInput}" @change="${this._handleInput}" @mousedown="${() => this._sliderDown = true}" @mouseup="${() => this._sliderDown = false}"></color-picker-slider>
+            <color-picker-slider tabindex="0" .label="${'change alpha'}" id="alphaInput" class="absbefore absafter checkerboard" .value="${this.alpha * 100}" min="0" max="100" step="1" @input="${this._handleAlphaSliderInput}" @change="${this._handleAlphaSliderInput}" @mousedown="${() => this._sliderDown = true}" @mouseup="${() => this._sliderDown = false}"></color-picker-slider>
           </div>
-          <div id="colorSteel" class="absbefore absafter checkerboard"></div>
+          <div id="colorSteel" class="checkerboard absbefore">
+            <div class="inner"></div>
+          </div>
         </section>
 
         <section id="textInput">
@@ -546,7 +541,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
   _handleAlphaSliderInput(e) {
     e.stopPropagation();
-    this.alpha = e.target.value;
+    this.alpha = e.target.value / 100;
   }
 
   _handleAlphaInput(e) {
@@ -606,10 +601,12 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   _valueChanged() {
     this._setGridThumbPosition();
     this._setHighlightColors();
-    if(!this._$container) return;
-    this._$container.style.setProperty('--value', this.color.toRgbString());
-    this._$container.style.setProperty('--alpha-slider-background-0', `${this.color.setAlpha(0).toRgbString()}`);
-    this._$container.style.setProperty('--alpha-slider-background-100', `${this.color.setAlpha(1).toRgbString()}`);
+    if(this._$colorSteel) this._$colorSteel.querySelector('.inner').style.background = this.color.toRgbString();
+  }
+
+  get _alphaSliderBackground() {
+    const color = new TinyColor(this.value);
+    return `linear-gradient(to right, ${color.setAlpha(0).toRgbString()} 0%, ${color.setAlpha(1).toRgbString()} 100%);`
   }
 
   _formatsChanged() {
@@ -617,7 +614,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   }
 
   _selectedFormatChanged() {
-    this._$grid.style.setProperty('--grid-gradient', this._gridGradient);
+    this._$grid.querySelector('.overlay').style.background = this._gridGradient;
     this._setGridThumbPosition();
   }
 
@@ -639,9 +636,8 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     const value = (this.selectedFormat === 'hsl') ? this.hsl.l : this.hsv.v;
     const thumbX = this._$grid.offsetWidth * saturation;
     const thumbY = this._$grid.offsetHeight * (1-value);
-    this._$grid.style.setProperty('--grid-offset-x', `${thumbX}px`);
-    this._$grid.style.setProperty('--grid-offset-y', `${thumbY}px`);
-    this._$grid.style.setProperty('--grid-background', new TinyColor({h: this.color.toHsl().h, s: 100, v: 100}).toRgbString());
+    this._$grid.querySelector('.thumb').style.transform = `translate(${thumbX}px, ${thumbY}px)`;
+    this._$grid.style.background = new TinyColor({h: this.color.toHsl().h, s: 100, v: 100}).toRgbString();
   }
 
   _setHighlightColors() {
@@ -665,16 +661,8 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     return this.shadowRoot.querySelector('#gridInput');
   }
 
-  get _hostStyles() {
-    return `
-      width: 240px;
-      height: 240px;
-      display: block;
-      --color-picker-background-color: #fff;
-      --color-picker-color: #222;
-      --color-picker-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-      font-family: var(--color-picker-font-family);
-    `;
+  get _$colorSteel() {
+    return this.shadowRoot.querySelector('#colorSteel')
   }
 
 }
