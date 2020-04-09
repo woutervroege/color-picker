@@ -337,7 +337,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           width: 38px;
           height: 38px;
           border-radius: 50%;
-          border: 1px solid var(--bg-color--10);
+          border: 1px solid var(--bg-color--20);
           margin: auto;
           overflow: hidden;
         }
@@ -364,7 +364,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
         }
 
         input:hover, select:hover, input:focus, select:focus {
-          border-color: var(--bg-color--10);
+          border-color: var(--bg-color--20);
         }
 
         :focus.focus-visible {
