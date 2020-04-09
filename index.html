@@ -11,13 +11,36 @@
   </style>
 </head>
 <body>
-  <color-picker id="picker"></color-picker>
+  <color-picker id="picker" swatch-mode="list">
+
+    <color-swatchgroup label="Brand Colors" readonly>
+      <color-swatch value="#ffffff" title="white" disabled></color-swatch>
+      <color-swatch value="#ff0000" title="red" readonly></color-swatch>
+      <color-swatch value="rgba(00, 255, 90, 0.7)" title="pink"></color-swatch>
+    </color-swatchgroup>
+
+    <color-swatchgroup label="Document Colors">
+      <color-swatch value="#ffffff"></color-swatch>
+      <color-swatch value="#ff0000" readonly></color-swatch>
+      <color-swatch value="#ff0099"></color-swatch>
+    </color-swatchgroup>
+    
+  </color-picker>
   <script>
     picker.addEventListener('input', (e) => {
       console.info('input', e.detail.value);
     })
     picker.addEventListener('change', (e) => {
       console.info('change', e.detail.value);
+    })
+    picker.addEventListener('swatch-added', (e) => {
+      console.info('swatch-added', e.detail.value);
+    })
+    picker.addEventListener('swatch-renamed', (e) => {
+      console.info('swatch-renamed', e.detail.value);
+    })
+    picker.addEventListener('swatch-removed', (e) => {
+      console.info('swatch-renamed', e.detail.value);
     })
   </script>
 </body>
