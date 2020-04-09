@@ -526,10 +526,6 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           <label data-name="#"><input aria-label="change hex8" type="text" .value="${this.hex8}" data-scheme="hex8" maxlength="8" @change="${this._handleInput}" @input="${e => e.stopPropagation()}"></label>
           </div>
 
-          <!-- <div class="alpha-input" ?hidden="${this.selectedFormat === 'hex8'}">
-            <label data-name="%"><input aria-label="change alpha" type="number" .value="${Math.round(this.alpha * 100)}" min="0" max="100" step="1" data-scheme="alpha" @input="${this._handleAlphaInput}"></label>
-          </div> -->
-        
         </section>
       </div>
     `;
