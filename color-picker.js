@@ -268,7 +268,6 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           position: absolute;
           margin: -7px;
           pointer-events: none;
-          transform: ${this._thumbPosition};
           ${this._thumbStyles}
         }
 
@@ -604,7 +603,12 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   _valueChanged() {
     this._setGridThumbPosition();
     this._setHighlightColors();
-    if(this._$colorSteel) this._$colorSteel.querySelector('.inner').style.background = this.color.toRgbString();
+    this._setColorSteelColor();
+  }
+
+  _setColorSteelColor() {
+    if(!this._$container) return;
+    this._setCSSProperty('background', this.color.toRgbString(), this._$colorSteel.querySelector('.inner'));
   }
 
   get _alphaSliderBackground() {
@@ -617,7 +621,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   }
 
   _selectedFormatChanged() {
-    this._$grid.querySelector('.overlay').style.background = this._gridGradient;
+    this._setCSSProperty('background', this._gridGradient, this._$grid.querySelector('.overlay'));
     this._setGridThumbPosition();
   }
 
@@ -634,22 +638,26 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
   _setGridThumbPosition() {
     if(!this._$grid) return;
-
     const saturation = (this.selectedFormat === 'hsl') ? this.hsl.s : this.hsv.s;
     const value = (this.selectedFormat === 'hsl') ? this.hsl.l : this.hsv.v;
     const thumbX = this._$grid.offsetWidth * saturation;
     const thumbY = this._$grid.offsetHeight * (1-value);
-    this._$grid.querySelector('.thumb').style.transform = `translate(${thumbX}px, ${thumbY}px)`;
-    this._$grid.style.background = new TinyColor({h: this.color.toHsl().h, s: 100, v: 100}).toRgbString();
+    this._setCSSProperty('transform', `translate(${thumbX}px, ${thumbY}px)`, this._$grid.querySelector('.thumb'));
+    this._setCSSProperty('background', new TinyColor({h: this.color.toHsl().h, s: 100, v: 100}).toRgbString(), this._$grid);
   }
 
   _setHighlightColors() {
     if(!this._$container) return;
     const bgColor = new TinyColor(window.getComputedStyle(this._$container).backgroundColor);
     const method = bgColor.isLight() ? 'darken' : 'brighten';
-    this._$container && this._$container.style.setProperty('--bg-color--10', bgColor[method]()[method]().toRgbString());
-    this._$container && this._$container.style.setProperty('--bg-color--20', bgColor[method]()[method]().toRgbString());
-    this._$container && this._$container.style.setProperty('--bg-color--60', bgColor[method]()[method]()[method]()[method]()[method]()[method]().toRgbString());
+    this._setCSSProperty('--bg-color--20', bgColor[method]()[method]().toRgbString(), this._$container);
+    this._setCSSProperty('--bg-color--60', bgColor[method]()[method]()[method]()[method]()[method]()[method]().toRgbString(), this._$container);
+  }
+
+  _setCSSProperty(propName, value, selector = this) {
+    if(!selector) return;
+    selector.style.setProperty(propName, value);
+    if(window.ShadyCSS) window.ShadyCSS.styleSubtree(this, {[propName] : value});
   }
 
   get _thumbStyles() {
