@@ -474,7 +474,6 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
           aria-valuetext="saturation ${this.hsv.s.toFixed(2)} ${this.selectedFormat === 'hsl' ? `light ${this.hsl.l.toFixed(2)}` : `value ${this.hsv.v.toFixed(2)}`}"
           @mousedown="${this._handleMousedown}"
           @keydown="${this._handleGridKeydown}"
-          @click="${this._handleGridClick}"
         ><div class="overlay"><div class="thumb"></div></div></section>
 
         <section id="sliderInput">
@@ -566,14 +565,20 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
   _handleMousemove(e) {
     if(!this._pointerDown) return;
-    const saturation = Math.min(Math.max((e.offsetX / this._$grid.offsetWidth), 0), 0.99);
-    const value = 0.99 - Math.min(Math.max((e.offsetY / this._$grid.offsetHeight), 0), 0.99);
+
+    const {x, y} = this.getBoundingClientRect();
+    const pointerX = Math.round(e.clientX - x);
+    const pointerY = Math.round(e.clientY - y);
+    const saturation = Math.min(Math.max((pointerX / this._$grid.offsetWidth), 0), 0.99);
+    const value = 0.99 - Math.min(Math.max((pointerY / this._$grid.offsetHeight), 0), 0.99);
+    
     if(this.selectedFormat === 'hsl') this.value = {...this.color.toHsl(), ...{s: saturation}, ...{l: value}};
     else this.value = {...this.color.toHsv(), ...{s: saturation}, ...{v: value}};
   }
 
-  _handleMousedown() {
+  _handleMousedown(e) {
     this._pointerDown = true;
+    this._handleMousemove(e);
   }
 
   _handleGridKeydown(e) {
@@ -597,12 +602,6 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
     if(e.key === 'PageUp') return this.value = (this.selectedFormat === 'hsl') ? {...hsl, ...{l: hsl.l+0.10}} : {...hsv, ...{v: hsv.v+0.10}};
     if(e.key === 'PageDown') return this.value = (this.selectedFormat === 'hsl') ? {...hsl, ...{l: hsl.l-0.10}} : {...hsv, ...{v: hsv.v-0.10}};
-  }
-
-  _handleGridClick(e) {
-    this._pointerDown = true;
-    this._handleMousemove(e);
-    this._pointerDown = false;
   }
 
   _valueChanged() {
