@@ -479,7 +479,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
         <section id="sliderInput">
           <div id="sliders">
-            <color-picker-slider tabindex="0" .label="${'change hue'}" id="hueInput" .value="${this.hsv.h}" min="0" max="359" step="1" data-scheme="hsv" data-key="h" @input="${this._handleInput}" @change="${this._handleInput}" @mousedown="${() => this._sliderDown = true}" @mouseup="${() => this._sliderDown = false}"></color-picker-slider>
+            <color-picker-slider tabindex="0" .label="${'change hue'}" id="hueInput" .value="${this.hsv.h}" min="0" max="359" step="1" data-scheme="hsv" data-key="h" @input="${this._handleHueSliderInput}" @change="${this._handleHueSliderInput}" @mousedown="${() => this._sliderDown = true}" @mouseup="${() => this._sliderDown = false}"></color-picker-slider>
             <color-picker-slider tabindex="0" .label="${'change alpha'}" id="alphaInput" class="absbefore absafter checkerboard" .value="${this.alpha * 100}" min="0" max="100" step="1" @input="${this._handleAlphaSliderInput}" @change="${this._handleAlphaSliderInput}" @mousedown="${() => this._sliderDown = true}" @mouseup="${() => this._sliderDown = false}"></color-picker-slider>
           </div>
           <div id="colorSteel" class="checkerboard absbefore">
@@ -539,6 +539,11 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     if(key) data[key] = Math.round(value);
     else data = value;
     this.value = data;
+  }
+
+  _handleHueSliderInput(e) {
+    this._handleInput(e);
+    this.propertyChangedCallback('value');
   }
 
   _handleAlphaSliderInput(e) {
@@ -611,6 +616,10 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     this._setCSSProperty('background', this.color.toRgbString(), this._$colorSteel.querySelector('.inner'));
   }
 
+  get _gridBackground() {
+    return new TinyColor({h: this.shadowRoot.querySelector('#hueInput').value, s: 1, v: 1}).toRgbString();
+  }
+
   get _alphaSliderBackground() {
     const color = new TinyColor(this.value);
     return `linear-gradient(to right, ${color.setAlpha(0).toRgbString()} 0%, ${color.setAlpha(1).toRgbString()} 100%);`;
@@ -643,7 +652,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     const thumbX = this._$grid.offsetWidth * saturation;
     const thumbY = this._$grid.offsetHeight * (1-value);
     this._setCSSProperty('transform', `translate(${thumbX}px, ${thumbY}px)`, this._$grid.querySelector('.thumb'));
-    this._setCSSProperty('background', new TinyColor({h: this.color.toHsl().h, s: 100, v: 100}).toRgbString(), this._$grid);
+    this._setCSSProperty('background', this._gridBackground, this._$grid);
   }
 
   _setHighlightColors() {
