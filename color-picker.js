@@ -182,6 +182,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   connectedCallback() {
     super.connectedCallback();
     this.selectedFormat = this.color.format;
+    this._valueChanged();
   }
 
   /**
