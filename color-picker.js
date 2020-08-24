@@ -666,7 +666,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
   _setCSSProperty(propName, value, selector = this) {
     if(!selector) return;
     selector.style.setProperty(propName, value);
-    if(window.ShadyCSS) window.ShadyCSS.styleSubtree(this, {[propName] : value});
+    if(window.ShadyCSS) window.ShadyCSS.styleSubtree(selector, {[propName] : value});
   }
 
   get _thumbStyles() {
