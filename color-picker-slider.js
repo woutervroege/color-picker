@@ -125,7 +125,7 @@ export class ColorPickerSlider extends PropertyChangedHandler(HTMLInputElement) 
   }
 
   connectedCallback() {
-    super.connectedCallback();
+    super.connectedCallback && super.connectedCallback();
     window.requestAnimationFrame(() => {
       this._labelChanged();
       this.$element.addEventListener('change', this._handleChange.bind(this));
@@ -133,7 +133,7 @@ export class ColorPickerSlider extends PropertyChangedHandler(HTMLInputElement) 
   }
 
   disconnectedCallback() {
-    super.disconnectedCallback();
+    super.disconnectedCallback && super.disconnectedCallback();
     this.$element.removeEventListener('change', this._handleChange.bind(this));
   }
 
