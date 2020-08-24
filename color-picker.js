@@ -322,7 +322,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
         }
 
         #alphaInput:after {
-          background: ${this._alphaSliderBackground}
+          background: var(--color-picker-alpha-slider-background);
         }
 
         #alphaInput:before, #alphaInput:after {
@@ -609,11 +609,17 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
     this._setGridThumbPosition();
     this._setHighlightColors();
     this._setColorSteelColor();
+    this._setAlphaSliderBackground();
   }
 
   _setColorSteelColor() {
     if(!this._$container) return;
     this._setCSSProperty('background', this.color.toRgbString(), this._$colorSteel.querySelector('.inner'));
+  }
+
+  _setAlphaSliderBackground() {
+    if(!this._$container) return;
+    this._setCSSProperty('--color-picker-alpha-slider-background', this._alphaSliderBackground, this._$container);
   }
 
   get _gridBackground() {
@@ -622,7 +628,7 @@ class ColorPicker extends PropertiesChangedHandler(PropertiesChangedCallback(Pro
 
   get _alphaSliderBackground() {
     const color = new TinyColor(this.value);
-    return `linear-gradient(to right, ${color.setAlpha(0).toRgbString()} 0%, ${color.setAlpha(1).toRgbString()} 100%);`;
+    return `linear-gradient(to right, ${color.setAlpha(0).toRgbString()} 0%, ${color.setAlpha(1).toRgbString()} 100%)`;
   }
 
   _formatsChanged() {
