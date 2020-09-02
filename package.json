@@ -11,8 +11,8 @@
   "license": "MIT",
   "dependencies": {
     "@ctrl/tinycolor": "^2.6.1",
-    "@html-element-wrappers/input": "^0.5.0",
-    "html-element-property-mixins": "^0.10.8"
+    "@html-element-wrappers/input": "^0.5.1",
+    "html-element-property-mixins": "^0.10.11"
   },
   "devDependencies": {
     "es-dev-server": "^1.46.0",
